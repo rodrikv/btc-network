@@ -11,7 +11,7 @@ results_directory: tmp/zelig/results
 #   SUCCESS:  + block generations
 #   INFO:     + block receipts
 #   DEBUG:    + all protocol messages
-log_level: DEBUG
+log_level: INFO
 
 # how many times to repeat the same simulation
 sim_reps: 1

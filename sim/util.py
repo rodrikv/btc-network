@@ -7,6 +7,7 @@ from enum import Enum
 import numpy as np
 import math
 import hashlib
+import json
 
 
 MAX_INCOMING_CONNECTIONS = 117
@@ -76,6 +77,9 @@ class SimpleAddress:
 
     def __str__(self):
         return self._str
+
+    def __dict__(self):
+        return {'group': self.group, 'ip': self.ip, 'str': self._str}
 
     def __eq__(self, other):
         return self.ip == other.ip and \

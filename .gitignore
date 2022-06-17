@@ -4,6 +4,9 @@ logs/
 dumps/
 outputs/
 .DS_Store
+.vscode
+*.html
+tmp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -29,6 +29,7 @@ node_mode = {
 class Simulation:
     def __init__(self, config_file=None):
         self.node_storage = NodeStorage()
+        self.message_storage = MessageStorage()
         self.name = ""
         self.results_dir = ""
         self.log_level = "SUCCESS"
@@ -55,7 +56,8 @@ class Simulation:
             self.__load_config_file(detailed=False)
 
         iter_seconds = self.iter_seconds
-        logger.warning(f'Simulation {self.name} ({self.sim_iters} iterations).')
+        logger.warning(
+            f'Simulation {self.name} ({self.sim_iters} iterations).')
         for rep in range(self.sim_reps):
             if self.config_file is not None:
                 self.__load_config_file(detailed=True)
@@ -65,7 +67,7 @@ class Simulation:
                     for n2 in self.nodes[:idx] + self.nodes[idx + 1:]:
                         if self.connection_predicate(n1, n2):
                             n1.connect(n2)
-                            n2.connect(n1)
+                            # n2.connect(n1)
                 self.__setup_mining()
 
             start_time = time.time()
@@ -81,19 +83,24 @@ class Simulation:
             plot.plot(self.nodes)
 
             if report_time:
-                logger.warning(f'Total simulation time (s):\t{end_time - start_time}')
-                logger.warning(f'Average time per step (s):\t{(end_time - start_time) / self.sim_iters}')
+                logger.warning(
+                    f'Total simulation time (s):\t{end_time - start_time}')
+                logger.warning(
+                    f'Average time per step (s):\t{(end_time - start_time) / self.sim_iters}')
             if track_perf:
-                logger.warning(f'Average CPU:\t{round(sum(cpu_percents) / len(cpu_percents), 1)}%')
+                logger.warning(
+                    f'Average CPU:\t{round(sum(cpu_percents) / len(cpu_percents), 1)}%')
                 logger.warning(f'Maximum CPU:\t{round(max(cpu_percents), 1)}%')
-                logger.warning(f'Average MEM:\t{round(sum(mem_percents) / len(mem_percents), 1)}%')
+                logger.warning(
+                    f'Average MEM:\t{round(sum(mem_percents) / len(mem_percents), 1)}%')
                 logger.warning(f'Maximum MEM:\t{round(max(mem_percents), 1)}%')
 
             logger.warning('Finished simulation. Saving nodes...')
             Path(f'{self.results_dir}/{sim_name}').mkdir(parents=True, exist_ok=True)
             for node in self.nodes:
-                with open(f'{self.results_dir}/{sim_name}/{node.name}', 'wb+') as f:
-                    pickle.dump(node, f)
+                pass
+                # with open(f'{self.results_dir}/{sim_name}/{node.name}', 'wb+') as f:
+                #     pickle.dump(node, f)
             with open(f'{self.results_dir}/{sim_name}/bookkeeper', 'wb+') as f:
                 pickle.dump(self.bookkeeper, f)
             logger.warning(
@@ -101,6 +108,7 @@ class Simulation:
 
     def add_node(self, node: Node):
         self.bookkeeper.register_node(node)
+        node.message_storage = self.message_storage
         node.tx_model = self.tx_modeling
         node.tx_per_iter = self.tx_per_node_per_iter
         node.max_block_size = self.max_block_size
@@ -108,7 +116,8 @@ class Simulation:
 
     def __setup_mining(self):
         """Adds genesis block and sets up nodes' consensus oracles"""
-        pow_oracle = PoWOracle(self.nodes, self.block_int_iters, self.block_reward)
+        pow_oracle = PoWOracle(
+            self.nodes, self.block_int_iters, self.block_reward)
         genesis_block = BTCBlock(Miner('satoshi', 0, None, 1), None, 0)
         for node in self.nodes:
             node.consensus_oracle = pow_oracle
@@ -134,18 +143,21 @@ class Simulation:
             self.set_log_level(config['log_level'])
 
             if detailed:
-                TxClass = getattr(importlib.import_module('bitcoin.tx_modelings'), self.tx_modeling)
+                TxClass = getattr(importlib.import_module(
+                    'bitcoin.tx_modelings'), self.tx_modeling)
                 self.tx_modeling = TxClass()
                 mine_strategy = HonestMining()
                 logger.warning('Creating nodes...')
                 self.nodes = []
                 for node in config['nodes']:
-                    num_nodes = node['count'] if self.nodes_in_each_region == -1 else self.nodes_in_each_region
+                    num_nodes = node['count'] if self.nodes_in_each_region == - \
+                        1 else self.nodes_in_each_region
                     mine_power = node['region_mine_power'] / num_nodes
                     region = node['region']
                     node_mode_class = node_mode[node['node_mode']]
                     for idx in range(num_nodes):
-                        node = node_mode_class(f'MINER_{region}_{idx}', mine_power, Region(region), self.iter_seconds)
+                        node = node_mode_class(
+                            f'MINER_{region}_{idx}', mine_power, Region(region), self.iter_seconds)
                         self.add_node(node)
                         node.mine_strategy = mine_strategy
                         self.node_storage.add(node)
@@ -165,16 +177,18 @@ class Simulation:
                         # n2.connect(node)
 
                 # MALICIOUS NODES HEREREERERERERERERERERe
-                victim_node = random.randint(0, len(self.nodes)-1)
-                for idx in range(len(self.nodes) // 4):
-                    enode = EclipseAttacker(f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
-                    enode.victim_node = self.nodes[victim_node]
-                    self.add_node(enode)
-                    enode.mine_strategy = NullMining()
-                    self.node_storage.add(enode)
-                    enode.node_storage = self.node_storage
+                # victim_node = random.randint(0, len(self.nodes)-1)
+                # for idx in range(len(self.nodes) // 4):
+                #     enode = EclipseAttacker(
+                #         f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
+                #     enode.victim_node = self.nodes[victim_node]
+                #     self.add_node(enode)
+                #     enode.mine_strategy = NullMining()
+                #     self.node_storage.add(enode)
+                #     enode.node_storage = self.node_storage
 
-                print()
+                # print()
+
     @staticmethod
     def set_log_level(level: str):
         logger.remove()
@@ -185,7 +199,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Blockchain simulator.")
     parser.add_argument('-c', metavar='filename', default='config.yaml',
                         help='Name of the YAML configuration file (default: config.yaml)')
-    parser.add_argument('-s', metavar='seed', type=int, help='Seed for random number generation')
+    parser.add_argument('-s', metavar='seed', type=int,
+                        help='Seed for random number generation')
     args = parser.parse_args()
     config_name = args.c
     seed = args.s
@@ -196,4 +211,5 @@ if __name__ == "__main__":
     if seed is not None:
         random.seed(seed)
     sim = Simulation(config_name)
+    sim.set_log_level('SUCCESS')
     sim.run(report_time=True, track_perf=True)

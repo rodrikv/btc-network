@@ -128,6 +128,8 @@ class Miner(Node):
         if not self.is_online:
             return
 
+        self.message_storage.add(item)
+
         snode = self.node_storage.get_node(item.sender_id)
 
         if snode and snode.id in self.tried_table.data and type(item) != VersionMessage:

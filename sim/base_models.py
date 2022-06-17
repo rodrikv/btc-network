@@ -290,3 +290,13 @@ class NodeStorage:
 
     def get_node(self, _id):
         return self.nodes[_id] if _id in self.nodes else None
+
+class MessageStorage:
+    def __init__(self) -> None:
+        self.messages = {}
+
+    def add(self, item):
+        try:
+            self.messages[item.__class__.__name__] += [item.__dict__]
+        except:
+            self.messages[item.__class__.__name__] = [item.__dict__]
