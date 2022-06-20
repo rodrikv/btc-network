@@ -81,6 +81,8 @@ class Simulation:
             end_time = time.time()
             plot = NetworkPlot()
             plot.plot(self.nodes)
+            for messages_mode, messages in self.message_storage.messages.items():
+                print(messages_mode, 'len:', len(messages))
 
             if report_time:
                 logger.warning(
@@ -159,6 +161,7 @@ class Simulation:
                         node = node_mode_class(
                             f'MINER_{region}_{idx}', mine_power, Region(region), self.iter_seconds)
                         self.add_node(node)
+                        node.message_storage = self.message_storage
                         node.mine_strategy = mine_strategy
                         self.node_storage.add(node)
                         node.node_storage = self.node_storage
@@ -177,15 +180,15 @@ class Simulation:
                         # n2.connect(node)
 
                 # MALICIOUS NODES HEREREERERERERERERERERe
-                # victim_node = random.randint(0, len(self.nodes)-1)
-                # for idx in range(len(self.nodes) // 4):
-                #     enode = EclipseAttacker(
-                #         f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
-                #     enode.victim_node = self.nodes[victim_node]
-                #     self.add_node(enode)
-                #     enode.mine_strategy = NullMining()
-                #     self.node_storage.add(enode)
-                #     enode.node_storage = self.node_storage
+                victim_node = random.randint(0, len(self.nodes)-1)
+                for idx in range(len(self.nodes) // 4):
+                    enode = EclipseAttacker(
+                        f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
+                    enode.victim_node = self.nodes[victim_node]
+                    self.add_node(enode)
+                    enode.mine_strategy = NullMining()
+                    self.node_storage.add(enode)
+                    enode.node_storage = self.node_storage
 
                 # print()
 

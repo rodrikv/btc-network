@@ -103,8 +103,8 @@ nodes:
     mining_strategy: Honest
     node_mode: Miner
 
-  # - count: 2
-  #   region: VN
-  #   region_mine_power: 0.46
-  #   mining_strategy: Selfish
-  #   node_mode: EclipseAttacker
+  - count: 2
+    region: VN
+    region_mine_power: 0.46
+    mining_strategy: Selfish
+    node_mode: EclipseAttacker

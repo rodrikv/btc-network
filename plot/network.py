@@ -89,7 +89,7 @@ class NetworkPlot:
         node_text = []
         for ip, node in nodes.items():
             node_adjacencies.append(len(node["outs"]) + len(node["ins"]))
-            node_text.append(f'#{len(node["outs"])}outs #{len(node["ins"])}ins <{ip}>')
+            node_text.append(f'#{len(node["outs"])}outs #{len(node["ins"])}ins <{ip}> name: {node["name"]}')
 
         node_trace.marker.color = node_adjacencies
         node_trace.text = node_text
@@ -102,7 +102,8 @@ class NetworkPlot:
             new_nodes[str(node.id)] = {
                 'pos': (random.random(), random.random()),
                 'outs': node.outs,
-                'ins': node.ins
+                'ins': node.ins,
+                'name': node.name,
             }
         return new_nodes
 
