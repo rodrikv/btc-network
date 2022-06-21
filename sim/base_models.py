@@ -14,7 +14,8 @@ from sim.network_util import get_delay, Region
 
 from bitcoin.tables import *
 import random
-
+import os
+import time
 # from bitcoin.messages import VersionMessage
 
 
@@ -295,8 +296,24 @@ class MessageStorage:
     def __init__(self) -> None:
         self.messages = {}
 
-    def add(self, item):
-        try:
-            self.messages[item.__class__.__name__] += [item.__dict__]
-        except:
-            self.messages[item.__class__.__name__] = [item.__dict__]
+    def add(self, to, item):
+        if item.__class__.__name__ in self.messages:
+            if f"[{item.sender_id}] [{to.id}]" in self.messages[item.__class__.__name__]:
+                self.messages[item.__class__.__name__][f"[{item.sender_id}] [{to.id}]"] += [item.__dict__]
+            else:
+                self.messages[item.__class__.__name__][f"[{item.sender_id}] [{to.id}]"] = [item.__dict__]
+
+        else:
+            self.messages[item.__class__.__name__] = {
+                f"[{item.sender_id}] [{to.id}]" : [item.__dict__]
+            }
+
+    def node_result_to_file(self):
+        if not os.path.exists('output'):
+            os.mkdir('output')
+
+        for message_mode, value in self.messages.items():
+            path = os.path.join('output', str(int(time.time())) + '_' + message_mode + '.txt')
+            with open(path, 'w') as f:
+                for connection, items in value.items():
+                    f.write(f'{connection} {len(items)}\n')

@@ -81,8 +81,7 @@ class Simulation:
             end_time = time.time()
             plot = NetworkPlot()
             plot.plot(self.nodes)
-            for messages_mode, messages in self.message_storage.messages.items():
-                print(messages_mode, 'len:', len(messages))
+            self.message_storage.node_result_to_file()
 
             if report_time:
                 logger.warning(

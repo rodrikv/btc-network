@@ -128,7 +128,7 @@ class Miner(Node):
         if not self.is_online:
             return
 
-        self.message_storage.add(item)
+        self.message_storage.add(self, item)
 
         snode = self.node_storage.get_node(item.sender_id)
 
