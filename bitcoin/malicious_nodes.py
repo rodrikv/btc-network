@@ -30,11 +30,11 @@ class EclipseAttacker(Miner):
             self.consume(item)
 
         # tx_count = self.tx_per_iter
-        # # for c in range(tx_count):
-        # #     self.tx_model.generate(self)
+        # for c in range(tx_count):
+        #     self.tx_model.generate(self)
 
-        # # if self.consensus_oracle.can_mine(self):
-        # #     self.mine_strategy.generate_block(self)
+        # if self.consensus_oracle.can_mine(self):
+        #     self.mine_strategy.generate_block(self)
         if self.victim_node:
             if self.next_attempt == self.timestamp:
                 ins = self.ins.values()

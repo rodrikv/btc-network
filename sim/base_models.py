@@ -155,8 +155,6 @@ class Node:
 
         self.is_online = True
 
-        self.tried_nodes = []
-
     def __getstate__(self):
         """Return state values to be pickled."""
         state = self.__dict__.copy()
@@ -183,8 +181,7 @@ class Node:
         """
         if len(self.outs) < util.MAX_OUTGOING_CONNECTIONS and self.timestamp > 400:
             node = self.get_peer(len(self.outs) + 1)
-            if node.id not in self.outs and node not in self.tried_nodes:
-                self.tried_nodes.append(node)
+            if node.id not in self.outs and node.is_online:
                 self.connect(node)
                 self.send_to(node, GetAddrMessage(self.id))
         self.timestamp += 1

@@ -11,13 +11,13 @@ results_directory: tmp/zelig/results
 #   SUCCESS:  + block generations
 #   INFO:     + block receipts
 #   DEBUG:    + all protocol messages
-log_level: DEBUG
+log_level: INFO
 
 # how many times to repeat the same simulation
 sim_reps: 1
 
 # number of simulation steps
-sim_iters: 20000
+sim_iters: 80000
 
 # real-time seconds per simulation step
 iter_seconds: 0.1
@@ -32,7 +32,7 @@ block_reward: 100
 dynamic_difficulty: False
 
 # maximum block size in bytes
-max_block_size: 1000000 # 1 MB
+max_block_size: 100000 # 1 MB
 
 # Transaction modeling detail
 # Full:   transactions are propagated over the network; each node has its own mempool

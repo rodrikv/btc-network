@@ -213,5 +213,4 @@ if __name__ == "__main__":
     if seed is not None:
         random.seed(seed)
     sim = Simulation(config_name)
-    sim.set_log_level('SUCCESS')
     sim.run(report_time=True, track_perf=True)
