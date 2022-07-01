@@ -179,15 +179,17 @@ class Simulation:
                         # n2.connect(node)
 
                 # MALICIOUS NODES HEREREERERERERERERERERe
-                victim_node = random.randint(0, len(self.nodes)-1)
-                for idx in range(len(self.nodes) // 4):
-                    enode = EclipseAttacker(
-                        f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
-                    enode.victim_node = self.nodes[victim_node]
-                    self.add_node(enode)
-                    enode.mine_strategy = NullMining()
-                    self.node_storage.add(enode)
-                    enode.node_storage = self.node_storage
+                logger.warning('Setting up malicious nodes...')
+                if config['add_malicious_nodes']:
+                    victim_node = random.randint(0, len(self.nodes)-1)
+                    for idx in range(len(self.nodes) // 4):
+                        enode = EclipseAttacker(
+                            f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
+                        enode.victim_node = self.nodes[victim_node]
+                        self.add_node(enode)
+                        enode.mine_strategy = NullMining()
+                        self.node_storage.add(enode)
+                        enode.node_storage = self.node_storage
 
                 # print()
 
