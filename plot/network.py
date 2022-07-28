@@ -3,7 +3,6 @@ import plotly.graph_objects as go
 import random
 
 
-
 class NetworkPlot:
     def edge_trace(self, nodes):
         edge_x = []
@@ -36,24 +35,23 @@ class NetworkPlot:
                 ay = y1-y0
                 ax = x1-x0
                 fig.add_annotation(
-                x=x0, y=y0,
-                xref="x", yref="y",
-                text='',
-                showarrow=True,
-                font=dict(
-                    family="Courier New, monospace", size=2, color='red'
-                ),
-                align="center",
-                arrowhead=1, arrowsize=1, arrowwidth=1, arrowcolor="#636363",
-                ax=ax, ay=ay,
-                borderpad=2,
-                bgcolor='black',
-                opacity=0.3,
-                # Place in the chart
-            )
+                    x=x0, y=y0,
+                    xref="x", yref="y",
+                    text='',
+                    showarrow=True,
+                    font=dict(
+                        family="Courier New, monospace", size=2, color='red'
+                    ),
+                    align="center",
+                    arrowhead=1, arrowsize=1, arrowwidth=1, arrowcolor="#636363",
+                    ax=ax, ay=ay,
+                    borderpad=2,
+                    bgcolor='black',
+                    opacity=0.3,
+                    # Place in the chart
+                )
 
         return fig
-
 
     def node_trace(self, nodes):
         node_x = []
@@ -89,7 +87,8 @@ class NetworkPlot:
         node_text = []
         for ip, node in nodes.items():
             node_adjacencies.append(len(node["outs"]) + len(node["ins"]))
-            node_text.append(f'#{len(node["outs"])}outs #{len(node["ins"])}ins <{ip}> name: {node["name"]}')
+            node_text.append(
+                f'#{len(node["outs"])}outs #{len(node["ins"])}ins <{ip}> name: {node["name"]}')
 
         node_trace.marker.color = node_adjacencies
         node_trace.text = node_text
@@ -123,7 +122,7 @@ class NetworkPlot:
                             xref="paper", yref="paper",
                             x=0.005, y=-0.002)],
                         xaxis=dict(showgrid=False, zeroline=False,
-                                showticklabels=False),
+                                   showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                         )
         fig.write_html("graph.html")

@@ -165,7 +165,6 @@ class Simulation:
                         self.node_storage.add(node)
                         node.node_storage = self.node_storage
 
-                # shitty code added for checking
                 self.__setup_mining()
 
                 logger.warning('Setting up random P2P network...')
@@ -176,9 +175,7 @@ class Simulation:
                     for i in range(self.connections_per_node):
                         n2 = random.choice(first_part + second_part)
                         node.connect(n2)
-                        # n2.connect(node)
 
-                # MALICIOUS NODES HEREREERERERERERERERERe
                 logger.warning('Setting up malicious nodes...')
                 if config['add_malicious_nodes']:
                     victim_node = random.randint(0, len(self.nodes)-1)
@@ -190,8 +187,6 @@ class Simulation:
                         enode.mine_strategy = NullMining()
                         self.node_storage.add(enode)
                         enode.node_storage = self.node_storage
-
-                # print()
 
     @staticmethod
     def set_log_level(level: str):

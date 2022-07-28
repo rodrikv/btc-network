@@ -23,7 +23,7 @@ sim_iters: 80000
 iter_seconds: 0.1
 
 # expected block interval in iters
-block_int_iters: 6000
+block_int_iters: 1000
 
 # block reward gained from mining
 block_reward: 100

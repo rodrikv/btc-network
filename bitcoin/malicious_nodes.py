@@ -10,6 +10,7 @@ class Decoy:
         super().__init__(iter_seconds, name, region, timestamp=timestamp)
         self.is_online = False
 
+
 class EclipseAttacker(Miner):
     def __init__(self, name, mine_power, region, iter_seconds, timestamp=0):
         mine_power = 50
@@ -18,12 +19,14 @@ class EclipseAttacker(Miner):
         self.just_once = False
         self.victim_node = None
         self.next_attempt = self.timestamp + 100
-        self.decoy_nodes: List[NullMining] = [SimpleAddress.randomaddress() for i in range(1000)]
+        self.decoy_nodes: List[NullMining] = [
+            SimpleAddress.randomaddress() for i in range(1000)]
 
     def step(self, seconds):
         self.timestamp += 1
         try:
-            items = [packet.payload for packet in self.inbox.pop(self.timestamp)]
+            items = [packet.payload for packet in self.inbox.pop(
+                self.timestamp)]
         except KeyError:
             items = []
         for item in items:
@@ -40,9 +43,11 @@ class EclipseAttacker(Miner):
                 ins = self.ins.values()
                 outs = self.outs.values()
                 if self.victim_node not in ins and self.victim_node in outs:
-                    self.send_to(self.victim_node, AddressMessage(self.id, self.decoy_nodes))
+                    self.send_to(self.victim_node, AddressMessage(
+                        self.id, self.decoy_nodes))
                 elif self.victim_node not in ins and self.victim_node not in outs:
-                    self.send_to(self.victim_node, VersionMessage(self.id, self))
+                    self.send_to(self.victim_node,
+                                 VersionMessage(self.id, self))
 
                 self.next_attempt = self.timestamp + 5 * 60
 
