@@ -10,7 +10,7 @@ import time
 from loguru import logger
 
 from sim.base_models import Node
-from sim.util import Region
+from sim.util import Region, SimpleAddress
 from bitcoin.tx_modelings import *
 from bitcoin.models import Miner
 from bitcoin.mining_strategies import *
@@ -82,20 +82,21 @@ class Simulation:
             plot = NetworkPlot()
             plot.plot(self.nodes)
             self.message_storage.node_result_to_file()
-
-            if report_time:
-                logger.warning(
-                    f'Total simulation time (s):\t{end_time - start_time}')
-                logger.warning(
-                    f'Average time per step (s):\t{(end_time - start_time) / self.sim_iters}')
-            if track_perf:
-                logger.warning(
-                    f'Average CPU:\t{round(sum(cpu_percents) / len(cpu_percents), 1)}%')
-                logger.warning(f'Maximum CPU:\t{round(max(cpu_percents), 1)}%')
-                logger.warning(
-                    f'Average MEM:\t{round(sum(mem_percents) / len(mem_percents), 1)}%')
-                logger.warning(f'Maximum MEM:\t{round(max(mem_percents), 1)}%')
-
+            try:
+                if report_time:
+                    logger.warning(
+                        f'Total simulation time (s):\t{end_time - start_time}')
+                    logger.warning(
+                        f'Average time per step (s):\t{(end_time - start_time) / self.sim_iters}')
+                if track_perf:
+                    logger.warning(
+                        f'Average CPU:\t{round(sum(cpu_percents) / len(cpu_percents), 1)}%')
+                    logger.warning(f'Maximum CPU:\t{round(max(cpu_percents), 1)}%')
+                    logger.warning(
+                        f'Average MEM:\t{round(sum(mem_percents) / len(mem_percents), 1)}%')
+                    logger.warning(f'Maximum MEM:\t{round(max(mem_percents), 1)}%')
+            except:
+                pass
             logger.warning('Finished simulation. Saving nodes...')
             Path(f'{self.results_dir}/{sim_name}').mkdir(parents=True, exist_ok=True)
             for node in self.nodes:
@@ -179,6 +180,7 @@ class Simulation:
                 logger.warning('Setting up malicious nodes...')
                 if config['add_malicious_nodes']:
                     victim_node = random.randint(0, len(self.nodes)-1)
+                    self.nodes[victim_node].name = "VICTIM_" + self.nodes[victim_node].name
                     for idx in range(len(self.nodes) // 4):
                         enode = EclipseAttacker(
                             f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
@@ -210,4 +212,14 @@ if __name__ == "__main__":
     if seed is not None:
         random.seed(seed)
     sim = Simulation(config_name)
+
     sim.run(report_time=True, track_perf=True)
+
+    import json
+    required_nodes = {}
+    for address, node in sim.node_storage.nodes.items():
+        if "MALICIOUSNODE" in node.name or "VICTIM_" in node.name:
+            required_nodes[str(address)] = node.name
+
+    with open('file.json', "w+") as f:
+        json.dump(required_nodes, f)
