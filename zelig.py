@@ -142,6 +142,7 @@ class Simulation:
             self.connections_per_node = config['connections_per_node']
             self.dynamic = config['dynamic_difficulty']
             self.block_reward = config['block_reward']
+            self.malicious_nodes_ratio = config['malicious_nodes_ratio']
             self.set_log_level(config['log_level'])
 
             if detailed:
@@ -181,7 +182,7 @@ class Simulation:
                 if config['add_malicious_nodes']:
                     victim_node = random.randint(0, len(self.nodes)-1)
                     self.nodes[victim_node].name = "VICTIM_" + self.nodes[victim_node].name
-                    for idx in range(len(self.nodes) // 4):
+                    for idx in range(int(len(self.nodes) * self.malicious_nodes_ratio / (1 - self.malicious_nodes_ratio))):
                         enode = EclipseAttacker(
                             f'ECLIPSEATTACKER_{idx}', mine_power, Region(region), self.iter_seconds)
                         enode.victim_node = self.nodes[victim_node]
